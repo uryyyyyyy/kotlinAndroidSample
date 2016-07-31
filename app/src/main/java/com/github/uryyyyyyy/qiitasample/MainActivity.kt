@@ -7,14 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
-import com.github.uryyyyyyy.qiitasample.client.ArticleClient
-import com.github.uryyyyyyy.qiitasample.model.Article
-import com.github.uryyyyyyy.qiitasample.model.User
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
+import com.github.uryyyyyyy.qiitasample.client.ClientUtil
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
@@ -23,18 +16,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
-        val gson = GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create()
-        val retrofit = Retrofit.Builder()
-                .baseUrl("https://qiita.com")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build()
-        val articleC1ient = retrofit.create(ArticleClient::class.java)
-
 
         val listAdapter = ArticleListAdapter(applicationContext)
         val listView: ListView = findViewById(R.id.list_view) as ListView
@@ -49,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         val searchButton = findViewById(R.id.my_search_button) as Button
 
         searchButton.setOnClickListener {
-            articleC1ient.search(queryEditText.text.toString())
+            ClientUtil.getArticleClient().search(queryEditText.text.toString())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ v ->
