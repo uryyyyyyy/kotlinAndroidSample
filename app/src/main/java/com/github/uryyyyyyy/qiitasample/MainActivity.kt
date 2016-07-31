@@ -2,23 +2,33 @@ package com.github.uryyyyyyy.qiitasample;
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.ListView
 import com.github.uryyyyyyy.qiitasample.model.Article
 import com.github.uryyyyyyy.qiitasample.model.User
-import com.github.uryyyyyyy.qiitasample.view.ArticleView
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        val articleView = ArticleView(applicationContext)
+        val listAdapter = ArticleListAdapter(applicationContext)
+        listAdapter.articles = listOf(dummyArticle("Kotlin入門", "たろう"),
+                dummyArticle("Java入門", "じろうまる"))
+        val listView: ListView = findViewById(R.id.list_view) as ListView
+        listView.adapter = listAdapter
+        listView.setOnItemClickListener { adapterView, view, position, id ->
+            val article = listAdapter.articles[position]
+            println(article)
+            ArticleActivity.intent(this, article).let { startActivity(it) }
+        }
+    }
 
-        articleView.setArticle(Article(
-                id = "123",
-                title = "Kotlin入門",
-                url = "http://www.example・com/articles/123",
-                user = User(id = "456", name = "たろう", profileImageUrl = "")))
-
-        setContentView(articleView)
+    private fun dummyArticle(title: String, userName: String): Article {
+        return Article(
+                id = "",
+                title = title,
+                url = "https://kotlinlang.org/",
+                user = User(id = "", name = userName, profileImageUrl = ""))
     }
 }
